@@ -7,17 +7,21 @@ logic to move files based on configured extension rules.
 from __future__ import annotations
 
 import logging
-import os
 import threading
 import time
 from pathlib import Path
 from typing import Dict, List, Optional
 
-from watchdog.events import FileSystemEventHandler, FileCreatedEvent
+from watchdog.events import (
+    FileSystemEventHandler,
+    FileCreatedEvent,
+    FileModifiedEvent,
+    FileDeletedEvent,
+    FileMovedEvent,
+)
 from watchdog.observers import Observer
 
-from notifier import notify_move
-from organizer import organize_file
+from notifier import send_basic_notification, notify_event
 
 logger = logging.getLogger(__name__)
 
@@ -72,15 +76,60 @@ class SortifyEventHandler(FileSystemEventHandler):
             logger.debug("File not stable or disappeared before organizing: %s", path)
             return
 
-        dst_path = organize_file(str(path), str(self.watch_folder), self.rules, db=self.db)
-        if dst_path:
-            notify_move(dst_path, db=self.db)
+        # Send basic notification for file creation
+        send_basic_notification(
+            "Sortify: File Created",
+            f"New file detected: {path.name}"
+        )
+
+        # For now, just log that we would organize the file
+        logger.info("Would organize file: %s", path)
 
     def on_created(self, event: FileCreatedEvent) -> None:
         if event.is_directory:
             return
 
         threading.Thread(target=self._process, args=(event.src_path,), daemon=True).start()
+
+    def on_modified(self, event: FileModifiedEvent) -> None:
+        if event.is_directory:
+            return
+
+        path = Path(event.src_path)
+        if self._is_ignored(path):
+            return
+
+        send_basic_notification(
+            "Sortify: File Modified",
+            f"File modified: {path.name}"
+        )
+
+    def on_deleted(self, event: FileDeletedEvent) -> None:
+        if event.is_directory:
+            return
+
+        path = Path(event.src_path)
+        if self._is_ignored(path):
+            return
+
+        send_basic_notification(
+            "Sortify: File Deleted",
+            f"File deleted: {path.name}"
+        )
+
+    def on_moved(self, event: FileMovedEvent) -> None:
+        if event.is_directory:
+            return
+
+        src_path = Path(event.src_path)
+        dest_path = Path(event.dest_path)
+        if self._is_ignored(src_path) or self._is_ignored(dest_path):
+            return
+
+        send_basic_notification(
+            "Sortify: File Moved",
+            f"File moved: {src_path.name} -> {dest_path.name}"
+        )
 
 
 def start_watcher(
@@ -106,6 +155,12 @@ def start_watcher(
     observer.schedule(event_handler, str(watch_folder_path), recursive=False)
     observer.start()
 
+    # Send basic notification that watcher started
+    send_basic_notification(
+        "Sortify: Watcher Started",
+        f"Monitoring folder: {watch_folder_path}"
+    )
+
     logger.info("Started watcher on %s", watch_folder_path)
 
     if stop_event is not None:
@@ -120,36 +175,3 @@ def start_watcher(
             observer.join()
 
     return observer
-
-
-if __name__ == "__main__":
-    import argparse
-
-    from config import load_config
-
-    parser = argparse.ArgumentParser(description="Start Sortify folder watcher")
-    parser.add_argument(
-        "--config",
-        default=None,
-        help="Path to config.json (defaults to config.json in project root)",
-    )
-    args = parser.parse_args()
-
-    cfg = load_config(args.config)
-    stop = threading.Event()
-
-    observer = start_watcher(
-        watch_folder=cfg["watch_folder"],
-        ignored_extensions=cfg["ignored_extensions"],
-        rules=cfg["extension_rules"],
-        stop_event=stop,
-    )
-
-    try:
-        while True:
-            time.sleep(0.5)
-    except KeyboardInterrupt:
-        logger.info("Shutting down Sortify watcher")
-        stop.set()
-        observer.stop()
-        observer.join()
