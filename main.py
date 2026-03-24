@@ -46,7 +46,8 @@ def main() -> None:
     )
 
     # For now, use basic config
-    watch_folder = "./watch"
+    import os
+    watch_folder = os.path.join(os.path.expanduser("~"), "Downloads")
     ignored_extensions = [".crdownload", ".part", ".tmp", ".partial"]
     rules = {
         ".pdf": "Documents/PDFs",
