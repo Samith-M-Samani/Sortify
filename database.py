@@ -19,8 +19,48 @@ def init_db():
     )
     """)
 
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS reverted_files (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        file_name TEXT,
+        original_path TEXT,
+        reverted_at TEXT
+    )
+    """)
+
     conn.commit()
     conn.close()
+
+
+def mark_file_reverted(file_name, original_path):
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    INSERT INTO reverted_files (file_name, original_path, reverted_at)
+    VALUES (?, ?, ?)
+    """, (
+        file_name,
+        original_path,
+        datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    ))
+
+    conn.commit()
+    conn.close()
+
+
+def is_file_reverted(file_name):
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    SELECT 1 FROM reverted_files WHERE file_name = ? LIMIT 1
+    """, (file_name,))
+
+    result = cursor.fetchone()
+    conn.close()
+
+    return result is not None
 
 
 def log_action(file_name, source, destination, action):
