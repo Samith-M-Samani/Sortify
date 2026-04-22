@@ -75,9 +75,9 @@ graph LR
 ```
 
 ## Demo
-[![Sortify Working Demo](sortify.gif)](PASTE_YOUR_VIDEO_LINK_HERE)
+[![Sortify Working Demo](sortify.gif)](https://drive.google.com/file/d/18eKSVJPgceZeovLAZ4sIMpXyMEMIWKXc/view?usp=drive_link)
 
-Direct video link: `PASTE_YOUR_VIDEO_LINK_HERE`
+Direct video link: `https://drive.google.com/file/d/18eKSVJPgceZeovLAZ4sIMpXyMEMIWKXc/view?usp=drive_link`
 
 ## Team Contribution
 1. **GUI and notification sending** - Dhyan Shah
