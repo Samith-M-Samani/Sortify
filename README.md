@@ -8,6 +8,7 @@ The project includes:
 - Real-time folder monitoring using `watchdog`.
 - Automatic file movement based on extension mapping.
 - Desktop notifications when files are moved.
+- Ignoring partially downloaded/temporary install files.
 - Revert support for the latest moved file.
 - SQLite logging of move/revert actions.
 
@@ -29,7 +30,7 @@ The project includes:
 cd Sortify
 
 # 2) Install required libraries
-pip install watchdog plyer
+pip install -r requirements.txt
 
 # 3) Run the project
 python main.py
@@ -41,6 +42,15 @@ python main.py
 3. Click **Start Sorting**.
 4. Add files to the monitored folder and watch Sortify organize them automatically.
 5. Use **Revert Last** if you want to move the latest file back to its original location.
+
+## Notification Feature
+- Sortify sends a desktop notification whenever a file is moved successfully.
+- Notification message includes the file name and the folder where it was moved.
+- This helps users track automated actions in real time without constantly checking the app window.
+
+## Ignoring Partial/Temporary Files
+- Sortify is configured to ignore partially downloaded or temporary install files.
+- This prevents incomplete files from being moved before they are fully available.
 
 ## Team Contribution
 1. **GUI and notification sending** — Dhyan Shah  
