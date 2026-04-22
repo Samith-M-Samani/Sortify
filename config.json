@@ -1,0 +1,20 @@
+{
+  "watch_folder": "./watch",  
+  "ignored_extensions": [
+    ".crdownload",
+    ".part",
+    ".tmp",
+    ".partial"
+  ],
+  "extension_rules": {
+    ".pdf": "Documents/PDFs",
+    ".docx": "Documents/Word",
+    ".xlsx": "Documents/Excel",
+    ".png": "Pictures/Images",
+    ".jpg": "Pictures/Images",
+    ".jpeg": "Pictures/Images",
+    ".mp3": "Music",
+    ".mp4": "Videos",
+    ".zip": "Archives"
+  }
+}

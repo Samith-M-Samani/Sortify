@@ -1,78 +1,48 @@
-# Sortify — Smart File Organizer
+# Sortify
+A Python automation tool that monitors folders in real-time and automatically sorts files into categorized directories based on file type.
 
-## Project Description
-Sortify is a Python desktop automation project that monitors a selected folder in real time and automatically organizes files into category-based folders (Images, Videos, Music, Documents, Archives, and Others).
+## Getting Started
 
-The project includes:
-- A modern Tkinter GUI for selecting folders and controlling the sorter.
-- Real-time folder monitoring using `watchdog`.
-- Automatic file movement based on extension mapping.
-- Desktop notifications when files are moved.
-- Ignoring partially downloaded/temporary install files.
-- Revert support for the latest moved file.
-- SQLite logging of move/revert actions.
-
-## Project Structure
-- `main.py` — Application entry point.
-- `gui.py` — User interface and controls.
-- `watcher.py` — Real-time monitoring logic.
-- `organizer.py` — Core file-sorting and revert logic.
-- `database.py` — SQLite setup and logging operations.
-- `notifier.py` — Desktop notification handling.
-- `config/file_types.py` — File extension to category mapping.
-- `database/sortify.db` — SQLite database file.
-- `logs/app.log` — Application log output.
-
-## Steps to Run Project
+1. Ensure you have Python 3.8+ installed.
+2. Install required dependencies:
 
 ```bash
-# 1) Open terminal in project folder
-cd Sortify
-
-# 2) Install required libraries
 pip install -r requirements.txt
+```
 
-# 3) Run the project
+For Windows notifications, run the setup script:
+```bash
+python setup_notifications.py
+```
+
+3. Configure your watch folder and rules in `config.json`.
+4. Run the watcher:
+
+```bash
 python main.py
 ```
 
-### How to Use
-1. Select the folder to monitor.
-2. Select the destination folder.
-3. Click **Start Sorting**.
-4. Add files to the monitored folder and watch Sortify organize them automatically.
-5. Use **Revert Last** if you want to move the latest file back to its original location.
+## Windows Notifications
 
-## Notification Feature
-- Sortify sends a desktop notification whenever a file is moved successfully.
-- Notification message includes the file name and the folder where it was moved.
-- This helps users track automated actions in real time without constantly checking the app window.
+Sortify supports Windows toast notifications to keep you informed of file operations:
 
-## Ignoring Partial/Temporary Files
-- Sortify is configured to ignore partially downloaded or temporary install files.
-- This prevents incomplete files from being moved before they are fully available.
+- **File Created**: When new files are detected
+- **File Organized**: When files are moved to organized folders
+- **File Modified/Deleted**: When files change or are removed
+- **Application Status**: Startup, running, and shutdown notifications
 
-## Team Contribution
-1. **GUI and notification sending** — Dhyan Shah  
-2. **Core logic and coding** — Heet Shah  
-3. **Project structure and code working** — Samith Samani
+### Setting up Windows Notifications
 
-## Architecture Flowchart
+1. Run the setup script:
+   ```bash
+   python setup_notifications.py
+   ```
+   This will install the necessary packages (`plyer` recommended, or `win10toast` as fallback).
 
-```mermaid
-graph LR
-    User["User"] --> GUI["GUI<br/>gui.py"]
-    GUI --> Watcher["Watcher<br/>watcher.py"]
-    Watcher --> Monitor["Monitored Folder"]
-    Monitor --> Event["New File Event"]
-    Event --> Organizer["Organizer<br/>organizer.py"]
-    Organizer --> Types["File Type Rules<br/>config/file_types.py"]
-    Organizer --> Dest["Destination Folder<br/>(Images/Videos/Documents/etc.)"]
-    Organizer --> DB["SQLite Logs<br/>database/sortify.db"]
-    Organizer --> Notify["Desktop Notification<br/>notifier.py"]
-    GUI --> Revert["Revert Last"]
-    Revert --> Organizer
-```
+2. Test notifications:
+   ```bash
+   python test_windows_notifications.py
+   ```
 
 ## Working Project Video
 Click the GIF preview below to open the full project demo video:
