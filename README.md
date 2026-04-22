@@ -75,11 +75,13 @@ graph LR
 ```
 
 ## Working Project Video
-Add your project demo video link below before final submission:
+Click the GIF preview below to open the full project demo video:
 
-- Video Link: `PASTE_YOUR_VIDEO_LINK_HERE`
+[![Sortify Working Demo](sortify-demo.gif)](PASTE_YOUR_VIDEO_LINK_HERE)
 
-Suggested demo flow:
+Direct video link: `PASTE_YOUR_VIDEO_LINK_HERE`
+
+Suggested flow:
 1. Open the app.
 2. Select monitor and destination folders.
 3. Start sorting.
